@@ -9,6 +9,9 @@ import java.net.URL;
 
 public class FlickrFetchr {
 
+    private static final String TAG = "FlickrFetchr";
+    private static final String API_KEY = "03e55c312c15c20d0b02b48dbf58e646";
+
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
