@@ -7,6 +7,18 @@ public class GalleryItem {
     private String mId;
     private String mUrl;
 
+    public void setCaption(String caption) {
+        mCaption = caption;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
+
+    public void setUrl(String url) {
+        mUrl = url;
+    }
+
     @Override
     public String toString() {
         return mCaption;

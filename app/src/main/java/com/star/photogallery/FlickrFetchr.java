@@ -4,6 +4,7 @@ package com.star.photogallery;
 import android.net.Uri;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class FlickrFetchr {
 
@@ -79,5 +81,27 @@ public class FlickrFetchr {
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse JSON", e);
         }
+    }
+
+    private void parseItems(List<GalleryItem> items, JSONObject jsonBody) throws JSONException {
+        JSONObject photosJSONObject = jsonBody.getJSONObject("photos");
+        JSONArray photoJSONArray = photosJSONObject.getJSONArray("photo");
+
+        for (int i = 0; i < photoJSONArray.length(); i++) {
+            JSONObject photoJSONObject = photoJSONArray.getJSONObject(i);
+
+            GalleryItem item = new GalleryItem();
+            item.setId(photoJSONObject.getString("id"));
+            item.setCaption(photoJSONObject.getString("title"));
+
+            if (!photoJSONObject.has("url_s")) {
+                continue;
+            }
+
+            item.setUrl(photoJSONObject.getString("url_s"));
+
+            items.add(item);
+        }
+
     }
 }
