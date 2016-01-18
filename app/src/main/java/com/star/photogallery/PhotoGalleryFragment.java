@@ -12,14 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoGalleryFragment extends Fragment {
 
     private static final String TAG = "PhotoGalleryFragment";
 
-
     private RecyclerView mPhotoRecyclerView;
+    private List<GalleryItem> mGalleryItems = new ArrayList<>();
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -42,7 +43,15 @@ public class PhotoGalleryFragment extends Fragment {
                 view.findViewById(R.id.fragment_photo_gallery_recycler_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
+        setupAdapter();
+        
         return view;
+    }
+
+    private void setupAdapter() {
+        if (isAdded()) {
+            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mGalleryItems));
+        }
     }
 
     private class PhotoHolder extends RecyclerView.ViewHolder {
