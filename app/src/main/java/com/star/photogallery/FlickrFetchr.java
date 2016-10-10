@@ -19,7 +19,7 @@ import java.util.List;
 public class FlickrFetchr {
 
     private static final String TAG = "FlickrFetchr";
-    private static final String API_KEY = "03e55c312c15c20d0b02b48dbf58e646";
+    private static final String API_KEY = "e7c1e5e6392f00b0ebd4fc24ae1b1e96";
 
     private static final String METHOD_KEY = "method";
     private static final String METHOD_VALUE = "flickr.photos.getRecent";
@@ -40,7 +40,7 @@ public class FlickrFetchr {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream in = httpURLConnection.getInputStream();
 
-            if (httpURLConnection.getResponseCode() != httpURLConnection.HTTP_OK) {
+            if (httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 throw new IOException(httpURLConnection.getResponseMessage() +
                         ": with " + urlSpec);
             }
