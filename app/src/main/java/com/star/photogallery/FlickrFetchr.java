@@ -78,8 +78,11 @@ public class FlickrFetchr {
                     .build().toString();
 
             String jsonString = getUrlString(url);
+
             Log.i(TAG, "Received JSON: " + jsonString);
+
             JSONObject jsonBody = new JSONObject(jsonString);
+
             parseItems(items, jsonBody);
         } catch (IOException e) {
             Log.e(TAG, "Failed to fetch items", e);
