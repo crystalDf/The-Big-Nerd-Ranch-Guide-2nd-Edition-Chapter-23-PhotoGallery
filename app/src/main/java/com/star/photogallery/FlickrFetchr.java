@@ -101,13 +101,10 @@ public class FlickrFetchr {
             item.setId(photoJSONObject.getString("id"));
             item.setCaption(photoJSONObject.getString("title"));
 
-            if (!photoJSONObject.has("url_s")) {
-                continue;
+            if (photoJSONObject.has("url_s")) {
+                item.setUrl(photoJSONObject.getString("url_s"));
+                items.add(item);
             }
-
-            item.setUrl(photoJSONObject.getString("url_s"));
-
-            items.add(item);
         }
 
     }
