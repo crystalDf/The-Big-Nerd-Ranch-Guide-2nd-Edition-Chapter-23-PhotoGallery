@@ -103,7 +103,7 @@ public class FlickrFetchr {
             item.setId(photo.getId());
             item.setCaption(photo.getTitle());
 
-            if (!"".equals(photo.getUrlS())) {
+            if (photo.getUrlS() != null) {
                 item.setUrl(photo.getUrlS());
                 items.add(item);
             }
