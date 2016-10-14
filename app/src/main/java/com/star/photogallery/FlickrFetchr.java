@@ -4,9 +4,7 @@ package com.star.photogallery;
 import android.net.Uri;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,7 +17,7 @@ import java.util.List;
 public class FlickrFetchr {
 
     private static final String TAG = "FlickrFetchr";
-    private static final String API_KEY = "e7c1e5e6392f00b0ebd4fc24ae1b1e96";
+    private static final String API_KEY = "d68bdef910c8657f4cbb1332f196a6c3";
 
     private static final String METHOD_KEY = "method";
     private static final String METHOD_VALUE = "flickr.photos.getRecent";
@@ -81,34 +79,36 @@ public class FlickrFetchr {
 
             Log.i(TAG, "Received JSON: " + jsonString);
 
-            JSONObject jsonBody = new JSONObject(jsonString);
+            parseItems(items, jsonString);
 
-            parseItems(items, jsonBody);
         } catch (IOException e) {
             Log.e(TAG, "Failed to fetch items", e);
-        } catch (JSONException e) {
-            Log.e(TAG, "Failed to parse JSON", e);
         }
 
         return items;
     }
 
-    private void parseItems(List<GalleryItem> items, JSONObject jsonBody) throws JSONException {
-        JSONObject photosJSONObject = jsonBody.getJSONObject("photos");
-        JSONArray photoJSONArray = photosJSONObject.getJSONArray("photo");
+    private void parseItems(List<GalleryItem> items, String jsonString) {
 
-        for (int i = 0; i < photoJSONArray.length(); i++) {
-            JSONObject photoJSONObject = photoJSONArray.getJSONObject(i);
+        Gson gson = new Gson();
+
+        Recent recent = gson.fromJson(jsonString, Recent.class);
+
+        List<Photo> photos = recent.getPhotos().getPhoto();
+
+        for (int i = 0; i < photos.size(); i++) {
+            Photo photo = photos.get(i);
 
             GalleryItem item = new GalleryItem();
-            item.setId(photoJSONObject.getString("id"));
-            item.setCaption(photoJSONObject.getString("title"));
+            item.setId(photo.getId());
+            item.setCaption(photo.getTitle());
 
-            if (photoJSONObject.has("url_s")) {
-                item.setUrl(photoJSONObject.getString("url_s"));
+            if (!"".equals(photo.getUrlS())) {
+                item.setUrl(photo.getUrlS());
                 items.add(item);
             }
-        }
 
+        }
     }
+
 }
