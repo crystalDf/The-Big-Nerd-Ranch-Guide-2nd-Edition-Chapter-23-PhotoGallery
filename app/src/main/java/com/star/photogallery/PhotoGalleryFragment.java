@@ -1,15 +1,18 @@
 package com.star.photogallery;
 
 
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import java.util.List;
@@ -17,7 +20,9 @@ import java.util.List;
 public class PhotoGalleryFragment extends Fragment {
 
     private static final String TAG = "PhotoGalleryFragment";
-    private static final int COLUMN_NUM = 3;
+    private static final int ITEM_WIDTH = 100;
+
+    private static final int DEFAULT_COLUMN_NUM = 3;
 
     private RecyclerView mPhotoRecyclerView;
     private GridLayoutManager mGridLayoutManager;
@@ -46,7 +51,17 @@ public class PhotoGalleryFragment extends Fragment {
         mPhotoRecyclerView = (RecyclerView)
                 view.findViewById(R.id.fragment_photo_gallery_recycler_view);
 
-        mGridLayoutManager = new GridLayoutManager(getActivity(), COLUMN_NUM);
+        mPhotoRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                int spanCount = convertPxToDp(mPhotoRecyclerView.getWidth()) / ITEM_WIDTH;
+                mGridLayoutManager.setSpanCount(spanCount);
+            }
+        });
+
+        mGridLayoutManager = new GridLayoutManager(getActivity(), DEFAULT_COLUMN_NUM);
 
         mPhotoRecyclerView.setLayoutManager(mGridLayoutManager);
 
@@ -73,6 +88,13 @@ public class PhotoGalleryFragment extends Fragment {
         setupAdapter();
         
         return view;
+    }
+
+    private int convertPxToDp(float sizeInPx) {
+        DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
+
+        return (int) (sizeInPx /
+                ((float) displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     private void updateCurrentPage() {
