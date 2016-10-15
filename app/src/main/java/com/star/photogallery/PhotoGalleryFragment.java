@@ -51,19 +51,19 @@ public class PhotoGalleryFragment extends Fragment {
         mPhotoRecyclerView = (RecyclerView)
                 view.findViewById(R.id.fragment_photo_gallery_recycler_view);
 
-        mPhotoRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-
-                int spanCount = convertPxToDp(mPhotoRecyclerView.getWidth()) / ITEM_WIDTH;
-                mGridLayoutManager.setSpanCount(spanCount);
-            }
-        });
-
         mGridLayoutManager = new GridLayoutManager(getActivity(), DEFAULT_COLUMN_NUM);
 
         mPhotoRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        mPhotoRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+
+                        int spanCount = convertPxToDp(mPhotoRecyclerView.getWidth()) / ITEM_WIDTH;
+                        mGridLayoutManager.setSpanCount(spanCount);
+                    }
+                });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mPhotoRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
