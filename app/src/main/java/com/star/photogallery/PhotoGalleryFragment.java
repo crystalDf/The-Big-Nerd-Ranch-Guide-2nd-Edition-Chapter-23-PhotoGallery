@@ -20,9 +20,9 @@ import java.util.List;
 public class PhotoGalleryFragment extends Fragment {
 
     private static final String TAG = "PhotoGalleryFragment";
-    private static final int ITEM_WIDTH = 100;
 
     private static final int DEFAULT_COLUMN_NUM = 3;
+    private static final int ITEM_WIDTH = 100;
 
     private RecyclerView mPhotoRecyclerView;
     private GridLayoutManager mGridLayoutManager;
@@ -93,8 +93,7 @@ public class PhotoGalleryFragment extends Fragment {
     private int convertPxToDp(float sizeInPx) {
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
 
-        return (int) (sizeInPx /
-                ((float) displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
+        return (int) (sizeInPx / displayMetrics.density);
     }
 
     private void updateCurrentPage() {
