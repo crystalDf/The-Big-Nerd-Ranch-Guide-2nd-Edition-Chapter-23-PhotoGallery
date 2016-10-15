@@ -1,4 +1,4 @@
-package com.star.photogallery;
+package com.star.photogallery.model;
 
 
 import com.google.gson.annotations.SerializedName;

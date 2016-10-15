@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.star.photogallery.model.Photo;
+import com.star.photogallery.model.Recent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +31,7 @@ public class FlickrFetchr {
     private static final String NO_JSON_CALL_BACK_VALUE = "1";
     private static final String EXTRAS_KEY = "extras";
     private static final String EXTRAS_VALUE = "url_s";
+    private static final String PAGE_KEY = "page";
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
@@ -61,7 +64,7 @@ public class FlickrFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public List<GalleryItem> fetchItems() {
+    public List<GalleryItem> fetchItems(int page) {
 
         List<GalleryItem> items = new ArrayList<>();
 
@@ -73,6 +76,7 @@ public class FlickrFetchr {
                     .appendQueryParameter(FORMAT_KEY, FORMAT_VALUE)
                     .appendQueryParameter(NO_JSON_CALL_BACK_KEY, NO_JSON_CALL_BACK_VALUE)
                     .appendQueryParameter(EXTRAS_KEY, EXTRAS_VALUE)
+                    .appendQueryParameter(PAGE_KEY, page + "")
                     .build().toString();
 
             String jsonString = getUrlString(url);

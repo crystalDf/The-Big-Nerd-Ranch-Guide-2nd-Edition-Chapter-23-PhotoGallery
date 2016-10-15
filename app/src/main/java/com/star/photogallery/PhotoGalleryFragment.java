@@ -2,6 +2,7 @@ package com.star.photogallery;
 
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,15 +12,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoGalleryFragment extends Fragment {
 
     private static final String TAG = "PhotoGalleryFragment";
+    private static final int COLUMN_NUM = 3;
 
     private RecyclerView mPhotoRecyclerView;
-    private List<GalleryItem> mGalleryItems = new ArrayList<>();
+    private GridLayoutManager mGridLayoutManager;
+    private List<GalleryItem> mGalleryItems;
+
+    private int mCurrentPage = 1;
+    private int mFetchedPage = 0;
+    private int mCurrentPosition = 0;
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -30,7 +36,7 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        new FetchItemsTask().execute();
+        new FetchItemsTask().execute(mCurrentPage);
     }
 
     @Override
@@ -39,16 +45,56 @@ public class PhotoGalleryFragment extends Fragment {
 
         mPhotoRecyclerView = (RecyclerView)
                 view.findViewById(R.id.fragment_photo_gallery_recycler_view);
-        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+
+        mGridLayoutManager = new GridLayoutManager(getActivity(), COLUMN_NUM);
+
+        mPhotoRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mPhotoRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    updateCurrentPage();
+                }
+
+            });
+        } else {
+            mPhotoRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    updateCurrentPage();
+                }
+            });
+        }
 
         setupAdapter();
         
         return view;
     }
 
+    private void updateCurrentPage() {
+        int firstVisibleItemPosition = mGridLayoutManager.findFirstVisibleItemPosition();
+        int lastVisibleItemPosition = mGridLayoutManager.findLastVisibleItemPosition();
+
+        if (lastVisibleItemPosition == (mGridLayoutManager.getItemCount() - 1) &&
+                mCurrentPage == mFetchedPage ) {
+            mCurrentPosition = firstVisibleItemPosition + 3;
+            mCurrentPage++;
+            new FetchItemsTask().execute(mCurrentPage);
+        }
+    }
+
     private void setupAdapter() {
         if (isAdded()) {
-            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mGalleryItems));
+            if (mGalleryItems != null) {
+                mPhotoRecyclerView.setAdapter(new PhotoAdapter(mGalleryItems));
+            } else {
+                mPhotoRecyclerView.setAdapter(null);
+            }
+            mPhotoRecyclerView.scrollToPosition(mCurrentPosition);
         }
     }
 
@@ -93,17 +139,27 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+    private class FetchItemsTask extends AsyncTask<Integer, Void, List<GalleryItem>> {
 
         @Override
-        protected List<GalleryItem> doInBackground(Void... params) {
-            return new FlickrFetchr().fetchItems();
+        protected List<GalleryItem> doInBackground(Integer... params) {
+            return new FlickrFetchr().fetchItems(params[0]);
         }
 
         @Override
         protected void onPostExecute(List<GalleryItem> items) {
-            mGalleryItems = items;
+            if (mGalleryItems == null) {
+                mGalleryItems = items;
+            } else {
+                if (items != null) {
+                    mGalleryItems.addAll(items);
+                }
+            }
+
+            mFetchedPage++;
+
             setupAdapter();
         }
     }
+
 }
