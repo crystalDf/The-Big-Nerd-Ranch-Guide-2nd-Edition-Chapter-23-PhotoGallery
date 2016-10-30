@@ -3,7 +3,6 @@ package com.star.photogallery;
 
 import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -65,25 +64,14 @@ public class PhotoGalleryFragment extends Fragment {
                     }
                 });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mPhotoRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    updateCurrentPage();
-                }
+        mPhotoRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
 
-            });
-        } else {
-            mPhotoRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-
-                    updateCurrentPage();
-                }
-            });
-        }
+                updateCurrentPage();
+            }
+        });
 
         setupAdapter();
         
